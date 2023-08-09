@@ -3,6 +3,9 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.StreamingHttpOutputMessage.Body;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @RestController
 public class EmployeeController {
+	
+	@Autowired
+	EmployeeRepository employeeRepository;
+	
+	@GetMapping("/employee")
+	public ResponseEntity<Object> getEmployee(){
+		try {
+			List<Employee> employees = employeeRepository.findAll();
+			return new ResponseEntity<>(employees, HttpStatus.OK);
+			
+		} catch (Exception e){
+			return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	private List<Employee> data = new ArrayList<Employee>();
 	
