@@ -39,16 +39,27 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/employee")
-	public Employee addEmployee(@RequestBody Employee body) {
-		
-		return employeeRepository.save(body);
+	public ResponseEntity<Object> addEmployee(@RequestBody Employee body) {
+		try {
+			Employee employee = employeeRepository.save(body);
+			return new ResponseEntity<>(employee, HttpStatus.CREATED);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@GetMapping("/employee/{employeeId}")
-	public Optional<Employee> getEmployeeDetail(@PathVariable Integer employeeId) {
-		Optional<Employee> employee = employeeRepository.findById(employeeId);
-		
-		return employee;
+	public ResponseEntity<Object> getEmployeeDetail(@PathVariable Integer employeeId) {
+		try {
+			Optional<Employee> employee = employeeRepository.findById(employeeId);
+			if(employee.isPresent()) {
+				return new ResponseEntity<>(employee, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<>("Employee not found", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PutMapping("/employee/{employeeId}")
